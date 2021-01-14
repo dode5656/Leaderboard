@@ -33,7 +33,7 @@ const setupDatabase = () => {
                     name varchar(50) NOT NULL,\
                     scores int DEFAULT 0,\
                     PRIMARY KEY (id)\
-                );", TEAM_TABLE, (err, result) => {
+                );", TEAM_TABLE, (err) => {
 
         if (err) throw err;
     })
@@ -43,7 +43,7 @@ const setupDatabase = () => {
                     username varchar(25) NOT NULL,\
                     password varchar(50) NOT NULL,\
                     PRIMARY KEY (id)\
-                );", ADMIN_TABLE, (err, result) => {
+                );", ADMIN_TABLE, (err) => {
 
         if (err) throw err;
     })
@@ -63,11 +63,34 @@ const getTeams = async () => {
 
 }
 
-const setTeamName = async (id,name) => {} // TODO: Setup setTeamName
+const setTeamName = async (id,name) => {
 
-const setTeamScore = async (id,score) => {} // TODO: Setup setTeamScore
+    pool.query("UPDATE ? SET name=? WHERE id=?", [TEAM_TABLE, name, id], (err) => {
+        if (err) throw err;
+    });
 
-const createTeam = async (name) => {} // TODO: Setup createTeam
+    return;
+}
+
+const setTeamScore = async (id,score) => {
+
+    pool.query("UPDATE ? SET scores=? WHERE id=?", [TEAM_TABLE, score, id], (err) => {
+        if (err) throw err;
+    })
+
+    return;
+}
+
+const createTeam = async (name) => {
+
+    let answer;
+    pool.query("INSERT INTO ? (name) VALUES (?)", [TEAM_TABLE, name], (err, result) => {
+        if (err) throw err;
+        answer = result.insertId
+    })
+
+    return answer;
+}
 
 module.exports = {getTeams,setTeamName,setTeamScore,createTeam,setupPool,setupDatabase};
 
