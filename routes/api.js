@@ -5,7 +5,9 @@ const database = require('../utils/database.js')
 //Callbacks
 const getTeams = async (req, res) => {
 
-    res.send(JSON.stringify(database.getTeams()));
+    let teams = await database.getTeams();
+    let result = JSON.stringify(teams);
+    res.send(result);
 
 }
 
@@ -15,8 +17,8 @@ const getTeamInfo = async (req, res) => {
         res.send("Team ID not found.")
         return;
     }
-    const teams = database.getTeams();
-    let result = teams.filter(team => team.id === req.params.teamId);
+    const teams = await database.getTeams();
+    let result = teams.filter(team => team.id === parseInt(req.params.teamId));
     if (!result) {
         res.send("Invalid team ID.")
         return;
@@ -32,7 +34,8 @@ const updateTeamInfo = async (req, res) => {
         res.send("Team ID not found.")
         return;
     }
-    if (!database.getTeams().filter(team => team.id === req.params.teamId)) {
+    let teams = await database.getTeams();
+    if (!teams.filter(team => team.id === req.params.teamId)) {
         res.send("Invalid team ID.")
         return;
     }
@@ -40,7 +43,7 @@ const updateTeamInfo = async (req, res) => {
         res.send("Invalid team name.")
         return;
     }
-    database.setTeamName(req.params.teamId,req.body.name)
+    await database.setTeamName(req.params.teamId,req.body.name)
     res.sendStatus(204);
 
 }
@@ -52,15 +55,17 @@ const updateTeamScores = async (req, res) => {
         res.send("Team ID not found.")
         return;
     }
-    if (!database.getTeams().filter(team => team.id === req.params.teamId)) {
+    let teams = await database.getTeams();
+    if (!teams.filter(team => team.id === req.params.teamId)) {
         res.send("Invalid team ID.")
         return;
     }
-    if (!req.body.scores || typeof req.body.name != "number") {
+    let scores = parseInt(req.body.scores);
+    if (!req.body.scores || scores === NaN) {
         res.send("Invalid team score.")
         return;
     }
-    database.setTeamScore(req.params.teamId,req.body.scores)
+    await database.setTeamScore(req.params.teamId,scores)
     res.sendStatus(204);
 
 }
@@ -73,8 +78,8 @@ const createTeam = async (req, res) => {
         res.send("Invalid team name.")
         return;
     }
-    database.createTeam(req.body.teamName)
-    res.sendStatus(204);
+    let teamId = await database.createTeam(req.body.name)
+    res.send(teamId.toString());
 
 }
 
@@ -83,8 +88,10 @@ const createTeam = async (req, res) => {
 //Team based api calls
 router.get("/teams", getTeams); //No auth needed
 router.get("/team/:teamId", getTeamInfo); //No auth needed
-router.post("/team/:teamId", updateTeamInfo); //Auth needed
+router.patch("/team/:teamId", updateTeamInfo); //Auth needed
 router.post("/team/create/", createTeam); //Auth needed
 
 //Score based api calls
-router.post("/team/:teamId/scores", updateTeamScores); //Auth needed
+router.patch("/team/:teamId/scores", updateTeamScores); //Auth needed
+
+module.exports = {router}
