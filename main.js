@@ -20,8 +20,13 @@ app.use(session({
 
     secret: SESSION_SECRET,
     cookie: {
-        secure: true
-    }
+        secure: true,
+        sameSite: true,
+        path: '/',
+        httpOnly: true,
+    },
+    resave: true,
+    saveUninitialized: false
 
 }));
 
@@ -35,7 +40,7 @@ app.use(auth);
 
 //Use the routers
 app.use("/admin", admin.router)
-app.use("/api", api,router)
+app.use("/api", api.router)
 
 app.get("/", (req, res) => {
 
