@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session');
-const {SESSION_SECRET, PORT} = require('./config.json')
+const {SESSION_SECRET, EXPRESS_PORT} = require('./config.json')
 
 // Routers
 const admin = require('./routes/admin.js');
@@ -48,4 +48,4 @@ app.get("/", (req, res) => {
 
 });
 
-app.listen(PORT)
+app.listen(EXPRESS_PORT)
