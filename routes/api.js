@@ -14,16 +14,16 @@ const getTeams = async (req, res) => {
 const getTeamInfo = async (req, res) => {
 
     if (!req.params.teamId) {
-        res.sendStatus(400).send("Team ID not found.")
+        res.status(400).send("Team ID not found.")
         return;
     }
     const teams = await database.getTeams();
     let result = teams.filter(team => team.id === parseInt(req.params.teamId));
     if (!result) {
-        res.send("Invalid team ID.")
+        res.status(400).send("Invalid team ID.")
         return;
     }
-    res.sendStatus(400).send(JSON.stringify(result))
+    res.status(400).send(JSON.stringify(result))
 
 }
 
@@ -31,16 +31,16 @@ const updateTeamInfo = async (req, res) => {
 
     if (!req.isAuthenticated) return res.sendStatus(401);
     if (!req.params.teamId) {
-        res.sendStatus(400).send("Team ID not found.")
+        res.status(400).send("Team ID not found.")
         return;
     }
     let teams = await database.getTeams();
     if (!teams.filter(team => team.id === req.params.teamId)) {
-        res.sendStatus(400).send("Invalid team ID.")
+        res.status(400).send("Invalid team ID.")
         return;
     }
     if (!req.body.name || typeof req.body.name != "string") {
-        res.sendStatus(400).send("Invalid team name.")
+        res.status(400).send("Invalid team name.")
         return;
     }
     await database.setTeamName(req.params.teamId,req.body.name)
@@ -52,17 +52,17 @@ const updateTeamScores = async (req, res) => {
 
     if (!req.isAuthenticated) return res.sendStatus(401);
     if (!req.params.teamId) {
-        res.sendStatus(400).send("Team ID not found.")
+        res.status(400).send("Team ID not found.")
         return;
     }
     let teams = await database.getTeams();
     if (!teams.filter(team => team.id === req.params.teamId)) {
-        res.sendStatus(400).send("Invalid team ID.")
+        res.status(400).send("Invalid team ID.")
         return;
     }
     let scores = parseInt(req.body.scores);
     if (!req.body.scores || scores === NaN) {
-        res.sendStatus(400).send("Invalid team score.")
+        res.status(400).send("Invalid team score.")
         return;
     }
     await database.setTeamScore(req.params.teamId,scores)
@@ -75,7 +75,7 @@ const createTeam = async (req, res) => {
     if (!req.isAuthenticated) return res.sendStatus(401);
 
     if (!req.body.name || typeof req.body.name != "string") {
-        res.sendStatus(400).send("Invalid team name.")
+        res.status(400).send("Invalid team name.")
         return;
     }
     let teamId = await database.createTeam(req.body.name)
