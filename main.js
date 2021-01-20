@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const path = require('path');
 const {SESSION_SECRET, EXPRESS_PORT} = require('./config.json')
 
 // Routers
@@ -34,6 +35,8 @@ app.use(session({
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+app.use(express.static('assets'))
+
 //Auth
 const auth = require('./utils/auth.js')
 app.use(auth);
@@ -44,7 +47,7 @@ app.use("/api", api.router)
 
 app.get("/", (req, res) => {
 
-    res.sendFile("./public/index.html")
+    res.sendFile("index.html", {root: path.join(__dirname, 'public')})
 
 });
 

@@ -1,0 +1,29 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+#container {
+    margin-right: 25%;
+    margin-left: 25%;
+}
+
+table {
+    width: 50%;
+    margin: auto;
+    border-collapse:collapse;
+    border-top: 1px  rgb(187, 183, 183) solid;
+    border-bottom: 1pxrgb(187, 183, 183) solid;
+}
+    
+table td {
+    border-top: 1px  rgb(187, 183, 183) solid;
+    border-bottom: 1px rgb(187, 183, 183) solid;
+    text-align: center;
+    height: 40px;
+}
+
+tr:nth-child(odd) {background-color: #f2f2f2;}

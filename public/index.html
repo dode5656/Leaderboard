@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Leaderboard</title>
+</head>
+<body>
+    
+    <div id="container">
+
+        <h1>Leaderboard</h1>
+        <hr>
+        <table id="leaderboard">
+            <tr>
+                <th>Place</th>
+                <th>Team</th>
+                <th>Scores</th>
+            </tr>
+        </table>
+
+    </div>
+
+    <script>const fetchAPI=async(e,t={},a="GET")=>{let s="POST"===a?{method:a,body:JSON.stringify(t),headers:{Accept:"application/json"},credentials:"same-origin"}:{method:a,headers:{Accept:"application/json"},credentials:"same-origin"},n=await fetch(`/api/${e}`,s),c=await n.json();switch(n.status){case 400:return await n.text();case 204:return;default:return c}},generateTable=e=>{let t=document.getElementById("leaderboard"),a=e.sort((e,t)=>t.scores-e.scores);for(let e=0;e<a.length;e++){let s=document.createElement("tr");s.className="team",s.innerHTML=`<td class="place">${e+1}</td><td class="name">${a[e].name}</td><td class="scores">${a[e].scores}</td>`,t.appendChild(s)}};window.onload=(async()=>{let e=await fetchAPI("teams");generateTable(e)});</script>
+
+</body>
+</html>

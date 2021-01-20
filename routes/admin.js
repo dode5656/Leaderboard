@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 
 router.get("/login", (req, res) => {
@@ -6,10 +7,10 @@ router.get("/login", (req, res) => {
     if (req.session.loggedin 
         && req.isAuthenticated) {
 
-        res.sendFile("../public/admin.html")
+        res.sendFile("admin.html", {root: path.join(__dirname, 'public')})
 
     } else {
-        res.sendFile("../public/login.html")
+        res.sendFile("login.html", {root: path.join(__dirname, 'public')})
     }
 
 })
