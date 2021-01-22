@@ -25,19 +25,24 @@ const setupDatabase = () => {
 
     if (!pool) throw "Error: Pool not setup yet."
 
-    pool.query("CREATE TABLE IF NOT EXISTS "+TEAM_TABLE+" (\
+    await pool.query("CREATE TABLE IF NOT EXISTS "+TEAM_TABLE+" (\
                     id int NOT NULL AUTO_INCREMENT,\
                     name varchar(50) NOT NULL,\
                     scores int DEFAULT 0,\
                     PRIMARY KEY (id)\
                 );").catch(console.error)
 
-    pool.query("CREATE TABLE IF NOT EXISTS "+ADMIN_TABLE+" (\
+    await pool.query("CREATE TABLE IF NOT EXISTS "+ADMIN_TABLE+" (\
                     id int NOT NULL AUTO_INCREMENT,\
                     username varchar(25) NOT NULL,\
                     password varchar(50) NOT NULL,\
                     PRIMARY KEY (id)\
                 );").catch(console.error)
+
+    let [rows] = await pool.query("SELECT id FROM "+ADMIN_TABLE+";");
+    if (rows.length == 0) {
+        await database.register("admin",bcrypt.hash("admin",20))
+    }
 
 }
 
@@ -52,21 +57,54 @@ const getTeams = async () => {
 
 const setTeamName = async (id,name) => {
 
-    await pool.execute("UPDATE "+TEAM_TABLE+" SET name=? WHERE id=?", [name, id]);
+    await pool.execute("UPDATE "+TEAM_TABLE+" SET name=? WHERE id=?;", [name, id]);
     return;
 }
 
 const setTeamScore = async (id,score) => {
 
-    await pool.execute("UPDATE "+TEAM_TABLE+" SET scores=? WHERE id=?", [score, id])
+    await pool.execute("UPDATE "+TEAM_TABLE+" SET scores=? WHERE id=?;", [score, id])
     return;
 }
 
 const createTeam = async (name) => {
 
-    let [answer] = await pool.execute("INSERT INTO "+TEAM_TABLE+" (name) VALUES (?)", [name]);
+    let [answer] = await pool.execute("INSERT INTO "+TEAM_TABLE+" (name) VALUES (?);", [name]);
     return answer.insertId;
 }
 
-module.exports = {getTeams,setTeamName,setTeamScore,createTeam,setupPool,setupDatabase};
+const checkUsername = async (username) => {
+
+    let [answer] = await pool.execute("SELECT id,name FROM "+ADMIN_TABLE+" WHERE username=?;", [username]);
+    return answer ? true : false;
+}
+
+const getUser = async (username) => {
+
+    let [answer] = await pool.execute("SELECT id,name,password FROM "+ADMIN_TABLE+" WHERE username=?'", [username]);
+    return answer;
+}
+
+const register = async (username, hashedPassword) => {
+
+    let [answer] = await pool.execute("INSERT INTO "+ADMIN_TABLE+" (username,password) VALUES (?,?);",[username,hashedPassword]);
+    return answer.insertId;
+}
+
+const updateUsername = async (id, username) => {
+
+    let [answer] = await pool.execute("UPDATE "+ADMIN_TABLE+" SET username=? WHERE id=?;", [username,id]);
+    return;
+}
+
+const updatePassword = async (id, password) => {
+
+    let [answer] = await pool.execute("UPDATE "+ADMIN_TABLE+" SET password=? WHERE id=?;", [password,id]);
+    return;
+}
+
+module.exports = {getTeams,setTeamName,setTeamScore,
+    createTeam,setupPool,setupDatabase,
+    checkUsername,getUser,register,
+    updateUsername,updatePassword};
 

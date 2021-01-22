@@ -1,4 +1,5 @@
 const express = require('express');
+const { handleRegister } = require('../utils/auth.js');
 const router = express.Router();
 const database = require('../utils/database.js')
 
@@ -29,7 +30,7 @@ const getTeamInfo = async (req, res) => {
 
 const updateTeamInfo = async (req, res) => {
 
-    if (!req.isAuthenticated) return res.sendStatus(401);
+    if (!req.session.loggedin) return res.sendStatus(401);
     if (!req.params.teamId) {
         res.status(400).send("Team ID not found.")
         return;
@@ -50,7 +51,7 @@ const updateTeamInfo = async (req, res) => {
 
 const updateTeamScores = async (req, res) => {
 
-    if (!req.isAuthenticated) return res.sendStatus(401);
+    if (!req.session.loggedin) return res.sendStatus(401);
     if (!req.params.teamId) {
         res.status(400).send("Team ID not found.")
         return;
@@ -72,7 +73,7 @@ const updateTeamScores = async (req, res) => {
 
 const createTeam = async (req, res) => {
 
-    if (!req.isAuthenticated) return res.sendStatus(401);
+    if (!req.session.loggedin) return res.sendStatus(401);
 
     if (!req.body.name || typeof req.body.name != "string") {
         res.status(400).send("Invalid team name.")
@@ -80,6 +81,32 @@ const createTeam = async (req, res) => {
     }
     let teamId = await database.createTeam(req.body.name)
     res.send(teamId.toString()); // Change to String to avoid Express thinking I am sending HTTP Status Code
+
+}
+
+const updateUsername = async (req, res) => {
+
+    if (!req.session.loggedin) return res.sendStatus(401);
+
+    if (!req.body.username || typeof req.body.username != "string") {
+        res.status(400).send("Invalid username.")
+        return;
+    }
+    await database.updateUsername(req.body.username);
+    res.sendStatus(204)
+
+}
+
+const updatePassword = async (req, res) => {
+
+    if (!req.session.loggedin) return res.sendStatus(401);
+
+    if (!req.body.password || typeof req.body.password != "string") {
+        res.status(400).send("Invalid password.")
+        return;
+    }
+    await database.updatePassword(req.body.password);
+    res.sendStatus(204)
 
 }
 
@@ -93,5 +120,10 @@ router.post("/team/create/", createTeam); //Auth needed
 
 //Score based api calls
 router.patch("/team/:teamId/scores", updateTeamScores); //Auth needed
+
+//Admin based api calls
+router.post("/admin/register", handleRegister);
+router.patch("/admin/password", updatePassword)
+router.patch("/admin/username", updateUsername)
 
 module.exports = {router}

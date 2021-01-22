@@ -37,10 +37,6 @@ app.use(express.urlencoded({extended: true}))
 
 app.use(express.static('assets'))
 
-//Auth
-const auth = require('./utils/auth.js')
-app.use(auth);
-
 //Use the routers
 app.use("/admin", admin.router)
 app.use("/api", api.router)
