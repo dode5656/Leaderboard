@@ -6,39 +6,17 @@
     <title>Admin Login</title>
 </head>
 <body>
-    
     <div class="container">
         <form id="form">
             <label class="form-label">Username:</label>
             <input id="form-username" type="text" placeholder="Username" name="username" />
             <label class="form-label">Password:</label>
             <input id="form-password" type="password" placeholder="Password" name="password" />
-            <button type="submit"></button>
+            <button type="submit">Submit</button>
             <p hidden="true" id="form-result"></p>
         </form>        
     </div>
-    
-
-    <script>const fetchLogin=async(t={})=>{let s={method:"POST",body:JSON.stringify(t),headers:{Accept:"application/json"},credentials:"same-origin"},n=await fetch("/admin/login",s);switch(n.status){case 400:return await n.text();case 204:return true;default:return c}}
-    </script>
-    <script>
-        const handleSubmit = () => {
-            let username = document.getElementById("form-username");
-            let password = document.getElementById("form-password");
-            let answer = await fetchLogin({username:username,password:password});
-            if (typeof answer==="boolean") return docuemnt.location = "/admin/";
-            else {
-                let e = document.getElementById("form-result");
-                e.hidden = false;    
-                return e.innerText = answer;
-            }
-        }
-        
-        document.getElementById("form").onsubmit = (e) => {
-            e.preventDefault();
-            handleSubmit();
-        }
-    </script>
-
+    <script>const fetchLogin=async(t)=>{let a={method:"POST",body:JSON.stringify(t),headers:{Accept:"application/json",'Content-Type':'application/json'},credentials:"same-origin"},e=await fetch("/admin/login",a);switch(e.status){case 400:return await e.text();case 204:return true;default:return e.json()}};</script>
+    <script>let form=document.getElementById("form");const handleSubmit=async()=>{let e=document.getElementById("form-username"),t=document.getElementById("form-password"),n=await fetchLogin({username:e.value,password:t.value});if("boolean"==typeof n)return window.location.reload();{let e=document.getElementById("form-result");return e.hidden=!1,void(e.innerText=n)}};form.addEventListener("submit",e=>{e.preventDefault(!0),handleSubmit()});</script>
 </body>
 </html>

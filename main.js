@@ -11,7 +11,7 @@ const app = express();
 const database = require('./utils/database.js');
 
 database.setupPool();
-database.setupDatabase();
+(async () => {await database.setupDatabase();})();
 
 //Trust first proxy (nginx)
 app.set('trust proxy', 1);
@@ -21,7 +21,7 @@ app.use(session({
 
     secret: SESSION_SECRET,
     cookie: {
-        secure: true,
+        secure: process.env.PRODUCTION ? false : true,
         sameSite: true,
         path: '/',
         httpOnly: true,
