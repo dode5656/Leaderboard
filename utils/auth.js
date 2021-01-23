@@ -23,7 +23,7 @@ const handleLogin = async (req,res) => {
 
     //Once passed all these checks. Then we can confirm they are the correct person.
     req.session.loggedin = true;
-    req.session.userID = user.id;
+    req.session.userID = user[0].id;
     res.sendStatus(204);
 }
 
