@@ -76,7 +76,13 @@ const createTeam = async (name) => {
 
 const checkUsername = async (username) => {
 
-    let [answer] = await pool.execute("SELECT id,username FROM "+ADMIN_TABLE+" WHERE username=?;", [username]);
+    let [answer] = await pool.execute("SELECT username FROM "+ADMIN_TABLE+" WHERE username=?;", [username]);
+    return answer.length==0 ? false : true;
+}
+
+const checkUserID = async (id) => {
+
+    let [answer] = await pool.execute("SELECT id FROM "+ADMIN_TABLE+" WHERE id=?;", [id]);
     return answer.length==0 ? false : true;
 }
 
@@ -104,8 +110,8 @@ const updatePassword = async (id, password) => {
     return;
 }
 
-module.exports = {getTeams,setTeamName,setTeamScore,
+module.exports = {pool, getTeams,setTeamName,setTeamScore,
     createTeam,setupPool,setupDatabase,
     checkUsername,getUser,register,
-    updateUsername,updatePassword};
+    updateUsername,updatePassword,checkUserID};
 

@@ -92,6 +92,11 @@ const updateUsername = async (req, res) => {
         res.status(400).send("Invalid username.")
         return;
     }
+    if (!req.body.userId || !(await database.checkUserID(req.body.userId))){
+        res.status(400).send("Invalid user ID.");
+        return;
+    }
+
     await database.updateUsername(req.body.username);
     res.sendStatus(204)
 
@@ -105,6 +110,11 @@ const updatePassword = async (req, res) => {
         res.status(400).send("Invalid password.")
         return;
     }
+    if (!req.body.userId || !(await database.checkUserID(req.body.userId))){
+        res.status(400).send("Invalid user ID.");
+        return;
+    }
+    
     await database.updatePassword(req.body.password);
     res.sendStatus(204)
 

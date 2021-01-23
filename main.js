@@ -1,7 +1,8 @@
 const express = require('express');
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
-const {SESSION_SECRET, EXPRESS_PORT} = require('./config.json')
+const {SESSION_SECRET, EXPRESS_PORT,MYSQL_HOST,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_DATABASE} = require('./config.json')
 
 // Routers
 const admin = require('./routes/admin.js');
@@ -16,10 +17,19 @@ database.setupPool();
 //Trust first proxy (nginx)
 app.set('trust proxy', 1);
 
+const sessionStore = new MySQLStore({
+    connectionLimit: 10,
+    host: MYSQL_HOST,
+    user: MYSQL_USERNAME,
+    password: MYSQL_PASSWORD,
+    database: MYSQL_DATABASE,
+});
+
 //Instantiate the express session
 app.use(session({
 
     secret: SESSION_SECRET,
+    store: sessionStore,
     cookie: {
         secure: process.env.PRODUCTION ? false : true,
         sameSite: true,

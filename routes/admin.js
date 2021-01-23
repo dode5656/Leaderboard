@@ -18,5 +18,9 @@ router.get("/", (req, res) => {
 
 })
 router.post("/login", auth.handleLogin);
+router.get("/logout", (req, res) => {
+    req.session.destroy(console.error);
+    res.sendStatus(204);
+})
 
 module.exports = {router}
