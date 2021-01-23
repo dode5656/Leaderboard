@@ -106,7 +106,7 @@ const updateUsername = async (id, username) => {
 
 const updatePassword = async (id, password) => {
 
-    await pool.execute("UPDATE "+ADMIN_TABLE+" SET password=? WHERE id=?;", [password,id]);
+    await pool.execute("UPDATE "+ADMIN_TABLE+" SET password=? WHERE id=?;", [await hash(password,10),id]);
     return;
 }
 
