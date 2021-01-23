@@ -110,7 +110,7 @@ const updatePassword = async (id, password) => {
     return;
 }
 
-module.exports = {pool, getTeams,setTeamName,setTeamScore,
+module.exports = {getTeams,setTeamName,setTeamScore,
     createTeam,setupPool,setupDatabase,
     checkUsername,getUser,register,
     updateUsername,updatePassword,checkUserID};
