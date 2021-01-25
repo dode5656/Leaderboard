@@ -3,9 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style2.css">
     <title>Admin Page</title>
 </head>
 <body>
-    <h1>This is the admin page!</h1>
+    <header>
+        <h2>Admin Page</h2>
+        <p class="button" id="logout-button" onclick="logout()">Logout</p>
+    </header>
+    <div class="container">
+        <div id="expand-buttons">
+            <p class="button" id="score-mgmt-button">Expand Score Management</p>
+            <p class="button" id="analytics-button">Expand Analytics</p>
+            </div>
+        <div id="score-mgmt" hidden="true">
+            <p>hi 1</p>
+        </div>
+        <div id="analytics" hidden="true">
+            <p>hi 2</p>
+        </div>
+    </div>
+    <script>
+        let scoreMgmt = document.getElementById("score-mgmt");
+        let analytics = document.getElementById("analytics");
+        let scoreMgmtButton = document.getElementById("score-mgmt-button");
+        let analyticsButton = document.getElementById("analytics-button");
+        document.getElementById("score-mgmt-button").addEventListener("click", (e) =>{
+            
+            if (scoreMgmt.hidden) {
+                scoreMgmtButton.classList.add("selected")
+                analyticsButton.classList.remove("selected")
+                scoreMgmt.hidden = false;
+                analytics.hidden = true; 
+            } else {
+                scoreMgmtButton.classList.remove("selected")
+                analyticsButton.classList.remove("selected")
+                scoreMgmt.hidden = true;
+                analytics.hidden = true;
+            }
+        });
+        document.getElementById("analytics-button").addEventListener("click", (e) =>{
+            
+            if (analytics.hidden) {
+                scoreMgmtButton.classList.remove("selected")
+                analyticsButton.classList.add("selected")
+                scoreMgmt.hidden = true;
+                analytics.hidden = false; 
+            } else {
+                scoreMgmtButton.classList.remove("selected")
+                analyticsButton.classList.remove("selected")
+                scoreMgmt.hidden = true;
+                analytics.hidden = true;
+            }
+        })
+
+        const logout = async () => {
+            await fetch("/admin/logout", {method: "GET"});
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>
