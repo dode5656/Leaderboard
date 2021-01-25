@@ -4,6 +4,7 @@ const {MYSQL_HOST,MYSQL_USERNAME,MYSQL_PASSWORD,MYSQL_DATABASE} = require('../co
 
 const TEAM_TABLE = "teams"
 const ADMIN_TABLE = "admin"
+const SCORERECORDS_TABLE = "scoreRecords"
 let pool;
 
 const setupPool = () => {
@@ -40,6 +41,15 @@ const setupDatabase = async () => {
                     PRIMARY KEY (id)\
                 );").catch(console.error);
 
+    await pool.query("CREATE TABLE IF NOT EXISTS "+SCORERECORDS_TABLE+" (\
+                    id int NOT NULL AUTO_INCREMENT,\
+                    scores int NOT NULL,\
+                    dateAdded date DEFAULT NOW(),\
+                    teamId int NOT NULL,\
+                    PRIMARY EY (id)\
+                    FOREIGN KEY (ID) REFERENCES "+TEAM_TABLE+"(id)\
+                );").catch(console.error);
+
     let [rows] = await pool.query("SELECT id FROM "+ADMIN_TABLE+";");
     if (rows.length == 0) {
         await register("admin",await hash("admin",10));
@@ -65,6 +75,7 @@ const setTeamName = async (id,name) => {
 const setTeamScore = async (id,score) => {
 
     await pool.execute("UPDATE "+TEAM_TABLE+" SET scores=? WHERE id=?;", [score, id])
+    await pool.execute("INSERT INTO "+SCORERECORDS_TABLE+" (scores,teamId) VALUES (?,?);", [score,id]);
     return;
 }
 
