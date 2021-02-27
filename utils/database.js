@@ -44,9 +44,9 @@ const setupDatabase = async () => {
     await pool.query("CREATE TABLE IF NOT EXISTS "+SCORERECORDS_TABLE+" (\
                     id int NOT NULL AUTO_INCREMENT,\
                     scores int NOT NULL,\
-                    dateAdded date DEFAULT NOW(),\
+                    dateAdded datetime NOT NULL DEFAULT NOW(),\
                     teamId int NOT NULL,\
-                    PRIMARY EY (id)\
+                    PRIMARY KEY (id),\
                     FOREIGN KEY (ID) REFERENCES "+TEAM_TABLE+"(id)\
                 );").catch(console.error);
 

@@ -17,20 +17,24 @@
             <p class="button" id="analytics-button">Expand Analytics</p>
             </div>
         <div id="score-mgmt" hidden="true">
-            <p>hi 1</p>
+            <form><table id="table"></table><button type="submit">Save</button></form>
         </div>
         <div id="analytics" hidden="true">
             <p>hi 2</p>
         </div>
     </div>
+    <script>const fetchAPI=async(e,t={},a="GET")=>{let s="POST"===a?{method:a,body:JSON.stringify(t),headers:{Accept:"application/json"},credentials:"same-origin"}:{method:a,headers:{Accept:"application/json",'Content-Type':'application/json'},credentials:"same-origin"},n=await fetch(`/api/${e}`,s);switch(n.status){case 400:return await n.text();case 204:return;default:return n.json()}}
+    </script>
     <script>
-        let scoreMgmt = document.getElementById("score-mgmt");
-        let analytics = document.getElementById("analytics");
-        let scoreMgmtButton = document.getElementById("score-mgmt-button");
-        let analyticsButton = document.getElementById("analytics-button");
-        document.getElementById("score-mgmt-button").addEventListener("click", (e) =>{
+        const scoreMgmt = document.getElementById("score-mgmt");
+        const analytics = document.getElementById("analytics");
+        const scoreMgmtButton = document.getElementById("score-mgmt-button");
+        const analyticsButton = document.getElementById("analytics-button");
+        const table = document.getElementById("table")
+        document.getElementById("score-mgmt-button").addEventListener("click", async (e) =>{
             
             if (scoreMgmt.hidden) {
+                if (!scoreMgmt.firstElementChild.firstElementChild.firstElementChild) await genScoreData();
                 scoreMgmtButton.classList.add("selected")
                 analyticsButton.classList.remove("selected")
                 scoreMgmt.hidden = false;
@@ -61,6 +65,23 @@
             await fetch("/admin/logout", {method: "GET"});
             window.location.reload();
         }
+
+        const genScoreData = async () => {
+            let teams = await fetchAPI("teams");
+            for (let i = 0; i<teams.length;i++) {
+                genDiv(teams[i])
+            }     
+        }
+
+        const genDiv = (team) => {
+            let s=document.createElement("tr");
+            s.className="team"
+            s.innerHTML=`<td class="name">${team.name}</td><td class="scores"><input value="${team.scores}" type="number"/></td>`
+            table.appendChild(s)
+        }
+        
+    
+
     </script>
 </body>
 </html>
