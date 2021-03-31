@@ -71,6 +71,7 @@ There are only a few simple steps to get this application running.
 #### Optional stuff
 
 - Use a Nginx reverse proxy to add support for HTTPS
+- Use Systemd or PM2 to automate starting and restarting the app.
 
 ## FAQs
 Q: I cannot use ports less than 1024.
