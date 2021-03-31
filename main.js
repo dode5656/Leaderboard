@@ -23,6 +23,10 @@ const sessionStore = new MySQLStore({
     user: MYSQL_USERNAME,
     password: MYSQL_PASSWORD,
     database: MYSQL_DATABASE,
+    clearExpired: true,
+    checkExpirationInterval: 900000,
+    expiration: 259200000,
+    endConnectionOnClose: true
 });
 
 //Instantiate the express session
@@ -35,6 +39,7 @@ app.use(session({
         sameSite: true,
         path: '/',
         httpOnly: true,
+        maxAge: 259200000 // 3 Days
     },
     resave: true,
     saveUninitialized: false
