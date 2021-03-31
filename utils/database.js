@@ -6,6 +6,7 @@ const TEAM_TABLE = "teams"
 const ADMIN_TABLE = "admin"
 const SCORERECORDS_TABLE = "scoreRecords"
 let pool;
+let scoreHistoryCache = [];
 
 const setupPool = () => {
 
@@ -47,7 +48,7 @@ const setupDatabase = async () => {
                     dateAdded datetime NOT NULL DEFAULT NOW(),\
                     teamId int NOT NULL,\
                     PRIMARY KEY (id),\
-                    FOREIGN KEY (ID) REFERENCES "+TEAM_TABLE+"(id)\
+                    FOREIGN KEY (teamId) REFERENCES "+TEAM_TABLE+"(id)\
                 );").catch(console.error);
 
     let [rows] = await pool.query("SELECT id FROM "+ADMIN_TABLE+";");
@@ -121,8 +122,19 @@ const updatePassword = async (id, password) => {
     return;
 }
 
+const getScoreHistory = async () => {
+    // Get count of rows in table and compare. If it is greater than cache, we update the cache. Otherwise we return the cache.
+    let [count] = await pool.execute("SELECT COUNT(1) FROM "+SCORERECORDS_TABLE+";");
+    if (count[0]["COUNT(1)"] > scoreHistoryCache.length) {
+        let [answer] = await pool.execute("SELECT scores,dateAdded, (SELECT name FROM "+TEAM_TABLE+" WHERE teamId=id) AS name FROM "+SCORERECORDS_TABLE+";");
+        scoreHistoryCache = answer;
+        return answer;
+    }
+    return scoreHistoryCache;
+}
+
 module.exports = {getTeams,setTeamName,setTeamScore,
     createTeam,setupPool,setupDatabase,
     checkUsername,getUser,register,
-    updateUsername,updatePassword,checkUserID};
+    updateUsername,updatePassword,checkUserID,getScoreHistory};
 

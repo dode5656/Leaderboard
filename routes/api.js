@@ -24,7 +24,7 @@ const getTeamInfo = async (req, res) => {
         res.status(400).send("Invalid team ID.")
         return;
     }
-    res.status(400).send(JSON.stringify(result))
+    res.status(200).send(JSON.stringify(result))
 
 }
 
@@ -112,6 +112,16 @@ const updatePassword = async (req, res) => {
 
 }
 
+const handleScoreHistory = async (req, res) => {
+
+    if (!req.session.loggedin) return res.sendStatus(401);
+
+    let result = await database.getScoreHistory();
+
+    res.status(200).send(JSON.stringify(result));
+
+}
+
 //Redirect api pages to callbacks
 
 //Team based api calls
@@ -127,5 +137,6 @@ router.patch("/team/:teamId/scores", updateTeamScores); //Auth needed
 router.post("/admin/register", handleRegister);
 router.patch("/admin/password", updatePassword)
 router.patch("/admin/username", updateUsername)
+router.get("/admin/scorehistory", handleScoreHistory)
 
 module.exports = {router}

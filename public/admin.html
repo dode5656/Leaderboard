@@ -17,20 +17,20 @@
             <p class="button" id="analytics-button">Expand Analytics</p>
             </div>
         <div id="score-mgmt" hidden="true">
-            <form><table id="table"></table><button type="submit">Save</button></form>
+            <form id="form"><table id="table"></table><button type="submit">Save</button></form>
         </div>
-        <div id="analytics" hidden="true">
-            <p>hi 2</p>
-        </div>
+        <div id="analytics" hidden="true"></div>
     </div>
-    <script>const fetchAPI=async(e,t={},a="GET")=>{let s="POST"===a?{method:a,body:JSON.stringify(t),headers:{Accept:"application/json"},credentials:"same-origin"}:{method:a,headers:{Accept:"application/json",'Content-Type':'application/json'},credentials:"same-origin"},n=await fetch(`/api/${e}`,s);switch(n.status){case 400:return await n.text();case 204:return;default:return n.json()}}
+    <script>const fetchAPI=async(e,t={},a="GET")=>{let s=("POST"===a||a==="PATCH")?{method:a,body:JSON.stringify(t),headers:{"Content-Type":"application/json",Accept:"application/json"},credentials:"same-origin"}:{method:a,headers:{Accept:"application/json",'Content-Type':'application/json'},credentials:"same-origin"},n=await fetch(`/api/${e}`,s);switch(n.status){case 400:return await n.text();case 204:return;default:return n.json()}}
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.0.2/echarts.min.js"></script>
     <script>
         const scoreMgmt = document.getElementById("score-mgmt");
         const analytics = document.getElementById("analytics");
         const scoreMgmtButton = document.getElementById("score-mgmt-button");
         const analyticsButton = document.getElementById("analytics-button");
         const table = document.getElementById("table")
+        let teams;
         document.getElementById("score-mgmt-button").addEventListener("click", async (e) =>{
             
             if (scoreMgmt.hidden) {
@@ -46,9 +46,10 @@
                 analytics.hidden = true;
             }
         });
-        document.getElementById("analytics-button").addEventListener("click", (e) =>{
+        document.getElementById("analytics-button").addEventListener("click", async (e) =>{
             
             if (analytics.hidden) {
+                if (!analytics.firstElementChild) await makeChart();
                 scoreMgmtButton.classList.remove("selected")
                 analyticsButton.classList.add("selected")
                 scoreMgmt.hidden = true;
@@ -62,15 +63,15 @@
         })
 
         const logout = async () => {
-            await fetch("/admin/logout", {method: "GET"});
+            await fetch("/admin/logout");
             window.location.reload();
         }
 
         const genScoreData = async () => {
-            let teams = await fetchAPI("teams");
+            if (!teams) teams = await fetchAPI("teams");
             for (let i = 0; i<teams.length;i++) {
                 genDiv(teams[i])
-            }     
+            }
         }
 
         const genDiv = (team) => {
@@ -79,8 +80,126 @@
             s.innerHTML=`<td class="name">${team.name}</td><td class="scores"><input value="${team.scores}" type="number"/></td>`
             table.appendChild(s)
         }
+
+        document.getElementById("form").addEventListener("submit",async (e) => {
+            e.preventDefault();
+            let teamNames = document.getElementsByClassName("name");
+            let scores = document.getElementsByClassName("scores");
+            for (let i = 0; i<teamNames.length;i++) {
+                if (scores[i].children[0].value==teams[i].scores) continue;
+                await fetchAPI("team/"+teams[i].id+"/scores",{scores:scores[i].children[0].value},"PATCH");
+            }
+            window.location.reload();
+            return;
+        })
         
-    
+        const getScoreHistoryData = async () => {
+            
+            let data;
+
+            let scores = await fetchAPI("/admin/scorehistory");
+
+            return scores;
+        }
+
+        const makeChart = async () => {
+            if (!teams) teams = await fetchAPI("teams");
+
+            const data = await getScoreHistoryData();
+            let teamNames = teams.map(x=>x.name)
+
+            var chartDom = document.createElement('canvas');
+            analytics.appendChild(chartDom);
+            chartDom.id = "lineChart"
+            chartDom.width=800;
+            chartDom.height=400;
+            var myChart = echarts.init(chartDom, 'dark');
+            var seriesList = [];
+            var datasetWithFilters = [];
+            echarts.util.each(teamNames, function (team) {
+                var datasetId = 'dataset_' + team;
+                datasetWithFilters.push({
+                    id: datasetId,
+                    fromDatasetId: 'dataset_raw',
+                    transform: {
+                        type: 'filter',
+                        config: {
+                            and: [
+                                { dimension: 'name', '=': team }
+                            ]
+                        }
+                    }
+                });
+                seriesList.push({
+                    type: 'line',
+                    datasetId: datasetId,
+                    name: team,
+                    showSymbol: false,
+                    labelLayout: {
+                        moveOverlap: 'shiftY'
+                    },
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    encode: {
+                        x: 'dateAdded',
+                        y: 'scores',
+                        tooltip: ['scores'],
+                        itemName: 'name'
+                    }
+                });
+            });
+            option = {
+                dataset: [{
+                    id: 'dataset_raw',
+                    source: data
+                }].concat(datasetWithFilters),
+                toolbox: {
+                    feature: {
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                legend: {
+                    show: true
+                },
+                tooltip: {
+                    show: true,
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                axisPointer: {
+                    link: {xAxisIndex: 'all'},
+                    trigger: "cross",
+                    snap: true,
+                    triggerOn: 'mousemove'
+                },
+                xAxis: {
+                    type: 'time'
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Scores'
+                },
+                dataZoom: [{
+                    type: 'inside',
+                    start: 0,
+                    end: 100
+                }, {
+                    start: 0,
+                    end: 100
+                }],
+                grid: {
+                     right: 140
+                },
+                series: seriesList
+            };
+
+            myChart.setOption(option);
+
+        }
 
     </script>
 </body>

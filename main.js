@@ -31,7 +31,7 @@ app.use(session({
     secret: SESSION_SECRET,
     store: sessionStore,
     cookie: {
-        secure: process.env.PRODUCTION ? false : true,
+        secure: process.env.DEVEL ? false : true,
         sameSite: true,
         path: '/',
         httpOnly: true,
