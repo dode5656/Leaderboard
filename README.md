@@ -1,4 +1,5 @@
 
+
 # Leaderboard
 
   
@@ -80,5 +81,12 @@ A: This is a linux feature. You need to run as root/with sudo to have access to 
 
 Q: I am using MySQL version 8 and I am getting an error while the app is logging in to the MySQL server.
 A: MySQL version 8 defaults to a different type of authentication for users. This is not supported by a dependency I use, so you will need to create a user with a supported authentication as explained in Step 2 in Installation. 
+
+Q: I cannot login to the admin page. I am not using Nginx and I am running this locally.
+A: You are most likely running HTTP and not HTTPS. By default the cookie is set to be only in HTTPS (secure), you can override that by running the app with the `DEVEL` environmental variable set to `true`. On Linux you can do that by running `DEVEL=true node .` On Windows you can do that by running 
+``` bat
+set DEVEL=true
+node .
+```
 
 More to come.
