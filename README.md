@@ -1,5 +1,4 @@
 
-
 # Leaderboard
 
   
@@ -29,7 +28,7 @@ This project is a simple application for me to get experience in creating Full S
  - [ ] Improve CSS and styling
  - [ ] Add API Support for ranges
  
-  This list might get bigger but I have no ideas what to add.   
+  This list might get bigger but I have no idea what to add.   
 
 ## Installation
 
@@ -59,7 +58,7 @@ There are only a few simple steps to get this application running.
    FLUSH PRIVILEGES;
    ```
       You can change the name of the user to whatever you want and of course change the password to a stronger one.
-3. After setting up the MySQL environment, we can move to configuring the app. Copy the `config.json.example` file and edit it depending on your needs. Place the previously used database and MySQL user and password in there and choose a free open port to use for the webserver. Generate a good random session secret by either smashing your head at the keyboard and break it or using your Password Manager's generator.
+3. After setting up the MySQL environment, we can move to configuring the app. Copy the `config.json.example` file and edit it depending on your needs. (Don't forget to rename the file to `config.json`) Place the previously used database and MySQL user and password in there and choose a free open port to use for the webserver. Generate a good random session secret by either smashing your head at the keyboard and break it or using your Password Manager's generator.
 4. Get in the working directory and run
 	``` sh
 	npm install
@@ -69,7 +68,8 @@ There are only a few simple steps to get this application running.
 	``` sh
 	node .
 	```
-   The default admin login is Username: `admin` and Password: `admin`
+6. Login to the admin panel using the port specified in `config.json` (**8080** as default) and using `admin` as the username and password.
+
 #### Optional stuff
 
 - Use a Nginx reverse proxy to add support for HTTPS
@@ -82,11 +82,18 @@ A: This is a linux feature. You need to run as root/with sudo to have access to 
 Q: I am using MySQL version 8 and I am getting an error while the app is logging in to the MySQL server.
 A: MySQL version 8 defaults to a different type of authentication for users. This is not supported by a dependency I use, so you will need to create a user with a supported authentication as explained in Step 2 in Installation. 
 
-Q: I cannot login to the admin page. I am not using Nginx and I am running this locally.
-A: You are most likely running HTTP and not HTTPS. By default the cookie is set to be only in HTTPS (secure), you can override that by running the app with the `DEVEL` environmental variable set to `true`. On Linux you can do that by running `DEVEL=true node .` On Windows you can do that by running 
-``` bat
-set DEVEL=true
-node .
-```
+Q: Program errors with `Cannot find module './config.json'`
+A: You have not copied the `config.json.example` file, renamed it and filled it in like in Step 3 of the Installation.
+
+Q: Program errors with `connect ECONNREFUSED`
+A: Your SQL setup in the config.json file is incorrect. Attempt the Installation again using the above steps.
+
+Q: The admin panel wont log in with the default credentials
+A: This typically occurs when you are using http over https because the program tries to create a secure cookie to store the login validation. To fix this: 
+- On Windows, use `Windows-Devel.bat` to run the program.
+- On Linux, run the program using `DEVEL=true node .` or just preprending `DEVEL=true` to the start of your run command.
+
+Q: The admin panel is asking for a username and password but I haven't specified one.
+A: As per the Installation instructions, the username and password for the default installation is `admin`.
 
 More to come.
