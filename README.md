@@ -68,6 +68,7 @@ There are only a few simple steps to get this application running.
 	``` sh
 	node .
 	```
+   The default admin login is Username: `admin` and Password: `admin`
 #### Optional stuff
 
 - Use a Nginx reverse proxy to add support for HTTPS
