@@ -1,0 +1,2 @@
+set DEVEL=true
+node .

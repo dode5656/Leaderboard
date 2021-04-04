@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+* {
+  font-family: 'Open Sans', sans-serif;
+  background-color: rgb(34, 37, 38);
+  color: #e8e6e3;
+}
+
+h1 {
+  text-align: center;
+}
+
+#container {
+  margin-right: 25%;
+  margin-left: 25%;
+}
+
+table {
+  width: 50%;
+  margin: auto;
+  border-collapse: collapse;
+  border-top: 1px rgb(187,183,183) solid;
+  border-bottom: 1px rgb(187, 183, 183) solid;
+}
+
+table td {
+  border-top: 1px rgb(187,183,183) solid;
+  border-bottom: 5px rgb(126, 126, 126) solid;
+  text-align: center;
+  height: 40px;
+}
+
+/* tr:nth-child(odd) {background-color: #f2f2f2;} */
