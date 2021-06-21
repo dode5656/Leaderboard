@@ -6,12 +6,12 @@
 }
   
 body {
-    background-color: rgb(34, 37, 38);
+    background-color: rgb(16, 12, 42, 0.9);
     color: #e8e6e3;
 }
   
 header {
-    background-color: rgb(66, 71, 74);
+    background-color: rgb(16, 12, 42, 0.7);
     margin: 0;
     width: 100%;
 }
@@ -42,17 +42,16 @@ header h2 {
     background-color: rgb(66, 71, 74);
 }
 
-#expand-buttons p:hover {
-    display: inline-block;
-    background-color: rgb(90, 95, 99);
+.menu-button:hover {
+    background-color: rgb(16, 12, 42, 1);
 }
 
 .selected {
-    background-color: rgb(90, 95, 99) !important;
+    background-color: rgb(16, 12, 42, 0.9) !important;
 }
 
 .menu {
-    background-color: rgb(66, 71, 74);
+    background-color: rgb(16, 12, 42, 0.6);
     margin-top: 20px;
     width: 10%;
     height: 88vh;
