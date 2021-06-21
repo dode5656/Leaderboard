@@ -50,3 +50,31 @@ header h2 {
 .selected {
     background-color: rgb(90, 95, 99) !important;
 }
+
+.menu {
+    background-color: rgb(66, 71, 74);
+    margin-top: 20px;
+    width: 10%;
+    height: 88vh;
+}
+
+.container {
+    display: flex;
+}
+
+#analytics {
+    margin: 50px;
+}
+
+#score-mgmt {
+    margin: 50px;
+}
+
+#menu-title {
+    text-align: center;
+    padding: 0px;
+}
+
+.menu-button {
+    padding: 10px; 
+}
